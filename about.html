@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About — Liberia Census Explorer</title>
+  <meta name="description"
+    content="About the Liberia Census Explorer: its purpose, the census data behind it, how the population forecasts are computed, and its limitations." />
+  <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
+  <link rel="manifest" href="./site.webmanifest" />
+  <link rel="apple-touch-icon" href="./assets/apple-touch-icon.png" />
+  <meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#14120e" media="(prefers-color-scheme: dark)" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Liberia Census Explorer" />
+  <meta property="og:title" content="About — Liberia Census Explorer" />
+  <meta property="og:description"
+    content="The data, methodology, and limitations behind the Liberia Census Explorer." />
+  <meta property="og:image" content="./assets/og-about.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="About — Liberia Census Explorer" />
+  <meta name="twitter:image" content="./assets/og-about.png" />
+
+  <script type="module"
+    src="https://cdn.jsdelivr.net/gh/RA9/tan-compose@kit-v1.12.0/kit/dist/themes/tokens.min.js"></script>
+  <script type="module"
+    src="https://cdn.jsdelivr.net/gh/RA9/tan-compose@kit-v1.12.0/kit/dist/kit.min.js"></script>
+  <script type="module" src="./vendor/tc-icons.js"></script>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body data-page="about">
+  <div id="nav-root"></div>
+
+  <div class="page">
+    <header class="hero">
+      <tc-badge variant="info" pill>About</tc-badge>
+      <h1>About this project</h1>
+      <p class="tagline">
+        An independent, open tool for exploring Liberia's census history and
+        projecting where its population is heading.
+      </p>
+    </header>
+
+    <tc-card>
+      <div slot="header" class="card-head">
+        <tc-icon name="info" size="18"></tc-icon><strong>What it does</strong>
+      </div>
+      <div class="prose">
+        <p>
+          The Liberia Census Explorer brings together the results of Liberia's
+          national population censuses — <strong>1962, 1974, 1984, 2008 and
+          2022</strong> — into one place where you can query them by year,
+          county, sex and age, and project future population with transparent
+          models that run entirely in your browser.
+        </p>
+        <p>
+          Everything is computed client-side from a single open dataset. There
+          is no server, no tracking, and no account required.
+        </p>
+      </div>
+    </tc-card>
+
+    <tc-card>
+      <div slot="header" class="card-head">
+        <tc-icon name="forecast" size="18"></tc-icon><strong>How the forecasts work</strong>
+      </div>
+      <div class="prose">
+        <p>Three standard projection methods are shown side by side so you can compare them:</p>
+        <tc-grid min="240px" gap="4" class="method-grid">
+          <div class="method">
+            <tc-icon name="trending-up" size="20"></tc-icon>
+            <h3>Growth-rate (CAGR)</h3>
+            <p>Compound annual growth between the first and last census, projected forward. The standard demographic approach.</p>
+          </div>
+          <div class="method">
+            <tc-icon name="bar-chart" size="20"></tc-icon>
+            <h3>Linear trend</h3>
+            <p>A least-squares straight line through every census — a fixed number of people added per year.</p>
+          </div>
+          <div class="method">
+            <tc-icon name="spark" size="20"></tc-icon>
+            <h3>Exponential fit</h3>
+            <p>A least-squares exponential through every census, capturing compounding informed by all data points.</p>
+          </div>
+        </tc-grid>
+        <p>
+          County forecasts use the compound growth rate between the 2008 and
+          2022 censuses. Projections are illustrative — real population growth
+          is shaped by fertility, mortality and migration that no simple curve
+          can fully capture.
+        </p>
+      </div>
+    </tc-card>
+
+    <tc-card>
+      <div slot="header" class="card-head">
+        <tc-icon name="file-text" size="18"></tc-icon><strong>Data &amp; sources</strong>
+      </div>
+      <div id="sources"></div>
+    </tc-card>
+
+    <tc-callout variant="warning">
+      <strong>Limitations.</strong> The 1984 final report was largely lost during
+      the civil war. County, sex and age breakdowns are only available on
+      consistent boundaries for 2008 and 2022. The population pyramid uses UN
+      World Population Prospects estimates, which differ from the enumerated
+      census counts and are labelled as estimates throughout. This is an
+      educational project and not an official government source.
+    </tc-callout>
+
+    <tc-card>
+      <div slot="header" class="card-head">
+        <tc-icon name="spark" size="18"></tc-icon><strong>Built with</strong>
+      </div>
+      <div class="prose">
+        <p>
+          The entire interface is built with
+          <a href="https://github.com/ra9/tan-compose" target="_blank" rel="noopener">tan-compose</a>
+          — a tiny, zero-dependency Web Components library — using its
+          <strong>kit</strong> components and <strong>icons</strong> packages.
+          No frameworks, no build step.
+        </p>
+        <tc-cluster gap="2">
+          <tc-badge pill>Web Components</tc-badge>
+          <tc-badge pill variant="info">No backend</tc-badge>
+          <tc-badge pill variant="success">Open data</tc-badge>
+        </tc-cluster>
+      </div>
+    </tc-card>
+  </div>
+
+  <div id="footer-root"></div>
+
+  <script type="module">
+    import { setupChrome } from "./js/chrome.js";
+    import { loadCensus } from "./js/data.js";
+    setupChrome({ active: "about" });
+    loadCensus().then((db) => {
+      const el = document.getElementById("sources");
+      if (!el) return;
+      el.innerHTML = db.meta.sources.map((s) => `
+        <div class="src">
+          <tc-icon name="external-link" size="16"></tc-icon>
+          <div>
+            <a href="${s.url}" target="_blank" rel="noopener">${s.label}</a>
+            <div class="src-supplies">${s.supplies}</div>
+          </div>
+        </div>`).join("");
+    }).catch(() => {});
+  </script>
+</body>
+</html>

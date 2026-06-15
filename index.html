@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Liberia Census Explorer — query & forecast</title>
+  <meta name="description"
+    content="Query Liberia's national census data (1962–2022) and project future population with multiple models, county forecasts, and population pyramids." />
+  <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
+  <link rel="manifest" href="./site.webmanifest" />
+  <link rel="apple-touch-icon" href="./assets/apple-touch-icon.png" />
+  <meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#14120e" media="(prefers-color-scheme: dark)" />
+
+  <!-- Social / Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Liberia Census Explorer" />
+  <meta property="og:title" content="Liberia Census Explorer" />
+  <meta property="og:description"
+    content="Query Liberia's census data (1962–2022) and forecast future population — by county, sex and age." />
+  <meta property="og:image" content="./assets/og.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Liberia Census Explorer" />
+  <meta name="twitter:description"
+    content="Query Liberia's census data (1962–2022) and forecast future population." />
+  <meta name="twitter:image" content="./assets/og.png" />
+
+  <!-- tan-compose-kit: theme tokens + all 38 components (CDN) -->
+  <script type="module"
+    src="https://cdn.jsdelivr.net/gh/RA9/tan-compose@kit-v1.12.0/kit/dist/themes/tokens.min.js"></script>
+  <script type="module"
+    src="https://cdn.jsdelivr.net/gh/RA9/tan-compose@kit-v1.12.0/kit/dist/kit.min.js"></script>
+  <!-- tan-compose-icons: official ICONS data + <tc-icon> (vendored from source) -->
+  <script type="module" src="./vendor/tc-icons.js"></script>
+
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body data-page="explorer">
+  <div id="nav-root"></div>
+
+  <div class="page">
+    <!-- ── Hero ── -->
+    <header class="hero">
+      <h1>Liberia Census Explorer</h1>
+      <p class="tagline">Query national census data (1962–2022) and project future population.</p>
+      <tc-cluster gap="2" align="center">
+        <tc-badge variant="info" pill>1962 – 2022</tc-badge>
+        <tc-badge variant="success" pill>5 censuses</tc-badge>
+        <tc-badge variant="neutral" pill>15 counties</tc-badge>
+      </tc-cluster>
+    </header>
+
+    <!-- ── Query / control panel ── -->
+    <tc-card elevated class="panel">
+      <div slot="header" class="panel-head">
+        <tc-icon name="filter" size="18"></tc-icon>
+        <strong>Query &amp; projection controls</strong>
+      </div>
+      <tc-grid min="220px" gap="5">
+        <div class="ctl">
+          <tc-slider id="targetYear" label="Projection target year"
+            min="2022" max="2050" step="1" value="2030" show-value showValue></tc-slider>
+          <p class="hint">Drag to choose how far into the future to project.</p>
+        </div>
+        <div class="ctl">
+          <tc-select id="focusCounty" label="Focus county (for projection)"></tc-select>
+          <p class="hint">Used on the Counties tab to forecast a single county.</p>
+        </div>
+        <div class="ctl">
+          <tc-select id="demoYear" label="Demographics census year"></tc-select>
+          <p class="hint">Switches the sex &amp; age breakdowns below.</p>
+        </div>
+      </tc-grid>
+    </tc-card>
+
+    <!-- ── Tabs ── -->
+    <tc-tabs id="tabs" active="trend">
+      <!-- Trend & forecast -->
+      <div slot="trend" class="tab-panel">
+        <tc-grid id="trendStats" min="200px" gap="4"></tc-grid>
+
+        <tc-grid min="380px" gap="5">
+          <tc-card>
+            <div slot="header" class="card-head">
+              <tc-icon name="trending-up" size="18"></tc-icon><strong>Historical population</strong>
+              <span class="card-sub">National totals, 1962–2022 (actual census counts)</span>
+            </div>
+            <tc-chart id="historyChart" type="area" height="300px" show-values></tc-chart>
+          </tc-card>
+
+          <tc-card>
+            <div slot="header" class="card-head">
+              <tc-icon name="forecast" size="18"></tc-icon><strong>Forecast — model comparison</strong>
+              <span class="card-sub" id="forecastSub">Projected from 2022</span>
+            </div>
+            <tc-chart id="forecastChart" type="line" height="300px"></tc-chart>
+          </tc-card>
+        </tc-grid>
+
+        <tc-callout id="modelNotes" variant="note" class="notes"></tc-callout>
+      </div>
+
+      <!-- Counties -->
+      <div slot="counties" class="tab-panel">
+        <tc-grid id="countyStats" min="200px" gap="4"></tc-grid>
+
+        <tc-card>
+          <div slot="header" class="card-head">
+            <tc-icon name="forecast" size="18"></tc-icon>
+            <strong id="countyForecastTitle">County forecast</strong>
+            <span class="card-sub" id="countyForecastSub"></span>
+          </div>
+          <tc-chart id="countyForecastChart" type="line" height="300px"></tc-chart>
+        </tc-card>
+
+        <tc-card>
+          <div slot="header" class="card-head">
+            <tc-icon name="bar-chart" size="18"></tc-icon><strong>Population by county</strong>
+            <span class="card-sub">2008 vs 2022, all 15 counties</span>
+          </div>
+          <tc-chart id="countyChart" type="bar" height="340px"></tc-chart>
+        </tc-card>
+
+        <tc-card>
+          <div slot="header" class="card-head">
+            <tc-icon name="list" size="18"></tc-icon><strong>County detail</strong>
+          </div>
+          <tc-table id="countyTable" page-size="8"></tc-table>
+        </tc-card>
+      </div>
+
+      <!-- Demographics -->
+      <div slot="demographics" class="tab-panel">
+        <tc-grid id="demoStats" min="200px" gap="4"></tc-grid>
+
+        <tc-grid min="300px" gap="5">
+          <tc-card>
+            <div slot="header" class="card-head">
+              <tc-icon name="users" size="18"></tc-icon><strong>Sex distribution</strong>
+              <span class="card-sub" id="sexSub"></span>
+            </div>
+            <tc-chart id="sexChart" type="donut" height="280px"></tc-chart>
+          </tc-card>
+          <tc-card>
+            <div slot="header" class="card-head">
+              <tc-icon name="pie-chart" size="18"></tc-icon><strong>Age structure</strong>
+              <span class="card-sub">Broad brackets, 2008 vs 2022</span>
+            </div>
+            <tc-chart id="ageChart" type="bar" height="280px"></tc-chart>
+          </tc-card>
+        </tc-grid>
+
+        <tc-card>
+          <div slot="header" class="card-head">
+            <tc-icon name="users" size="18"></tc-icon>
+            <strong id="pyramidTitle">Population pyramid</strong>
+            <span class="card-sub">By 5-year age group and sex (UN estimate — not the census enumeration)</span>
+          </div>
+          <div id="pyramid" class="pyramid"></div>
+          <div class="pyramid-legend">
+            <span class="pl pl-m"><span class="sw"></span>Male</span>
+            <span class="pl pl-f"><span class="sw"></span>Female</span>
+          </div>
+        </tc-card>
+      </div>
+
+      <!-- Raw data -->
+      <div slot="data" class="tab-panel">
+        <tc-cluster gap="3" align="end" class="data-controls">
+          <tc-select id="dataset" label="Dataset"></tc-select>
+          <tc-button id="downloadBtn" variant="secondary" size="md">
+            <tc-icon name="download" size="16"></tc-icon> Download JSON
+          </tc-button>
+        </tc-cluster>
+        <tc-table id="dataTable" page-size="10"></tc-table>
+      </div>
+    </tc-tabs>
+
+    <!-- ── Sources ── -->
+    <tc-card class="sources">
+      <div slot="header" class="card-head">
+        <tc-icon name="info" size="18"></tc-icon><strong>Sources &amp; method</strong>
+      </div>
+      <div id="sources"></div>
+    </tc-card>
+
+  </div>
+
+  <div id="footer-root"></div>
+
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>

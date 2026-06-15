@@ -1,0 +1,125 @@
+{
+  "meta": {
+    "title": "Liberia National Population & Housing Census",
+    "censusYears": [1962, 1974, 1984, 2008, 2022],
+    "counties": [
+      "Bomi", "Bong", "Gbarpolu", "Grand Bassa", "Grand Cape Mount",
+      "Grand Gedeh", "Grand Kru", "Lofa", "Margibi", "Maryland",
+      "Montserrado", "Nimba", "River Cess", "River Gee", "Sinoe"
+    ],
+    "sources": [
+      {
+        "id": "lisgis-2008",
+        "label": "LISGIS — 2008 Population & Housing Census, Final Results (Highlights)",
+        "url": "https://www.paris21.org/sites/default/files/LIBERIA_census.pdf",
+        "supplies": "National totals 1962/1974/1984/2008, 2008 sex split, 2008 county figures"
+      },
+      {
+        "id": "lisgis-2022",
+        "label": "LISGIS — 2022 Population & Housing Census, Final Report",
+        "url": "https://www.lisgis.gov.lr/",
+        "supplies": "National total 2022, 2022 sex split, 2022 county figures, 2022 age groups"
+      },
+      {
+        "id": "wikipedia-demography",
+        "label": "Wikipedia — Demographics of Liberia (well-cited derived brackets)",
+        "url": "https://en.wikipedia.org/wiki/Demographics_of_Liberia",
+        "supplies": "2008 broad age brackets (0-14 / 15-64 / 65+)"
+      },
+      {
+        "id": "un-wpp-2022",
+        "label": "UN World Population Prospects 2022 (via PopulationPyramid.net) — ESTIMATE",
+        "url": "https://www.populationpyramid.net/liberia/2022/",
+        "supplies": "2022 population pyramid: 5-year age groups by sex (UN estimate, not the census enumeration)"
+      }
+    ],
+    "notes": [
+      "1984 final report was largely lost during the civil war; 2,101,628 is the figure LISGIS carries in its official trend table.",
+      "County-level data is only available on consistent 15-county boundaries for 2008 and 2022.",
+      "Sex splits are sourced for 2008 and 2022 only.",
+      "2008 broad age brackets are a commonly-cited derived version (Wikipedia); 2022 broad brackets are summed from official LISGIS 5-year groups.",
+      "County figures reconcile exactly to the national total for both 2008 (3,476,608) and 2022 (5,250,187)."
+    ]
+  },
+
+  "national": {
+    "1962": 1016443,
+    "1974": 1503368,
+    "1984": 2101628,
+    "2008": 3476608,
+    "2022": 5250187
+  },
+
+  "byCounty": {
+    "Bomi":             { "2008": 84119,   "2022": 133705 },
+    "Bong":             { "2008": 333481,  "2022": 467561 },
+    "Gbarpolu":         { "2008": 83388,   "2022": 95995 },
+    "Grand Bassa":      { "2008": 221693,  "2022": 293689 },
+    "Grand Cape Mount": { "2008": 127076,  "2022": 178867 },
+    "Grand Gedeh":      { "2008": 125258,  "2022": 216692 },
+    "Grand Kru":        { "2008": 57913,   "2022": 109342 },
+    "Lofa":             { "2008": 276863,  "2022": 367376 },
+    "Margibi":          { "2008": 209923,  "2022": 304946 },
+    "Maryland":         { "2008": 135938,  "2022": 172587 },
+    "Montserrado":      { "2008": 1118241, "2022": 1920965 },
+    "Nimba":            { "2008": 462026,  "2022": 621841 },
+    "River Cess":       { "2008": 71509,   "2022": 90819 },
+    "River Gee":        { "2008": 66789,   "2022": 124653 },
+    "Sinoe":            { "2008": 102391,  "2022": 151149 }
+  },
+
+  "bySex": {
+    "2008": { "male": 1739945, "female": 1736663 },
+    "2022": { "male": 2644027, "female": 2606160 }
+  },
+
+  "byAge": {
+    "2008": { "0_14": 1458072, "15_64": 1900425, "65plus": 118111, "source": "wikipedia-demography" },
+    "2022": { "0_14": 1797178, "15_64": 3305412, "65plus": 147597, "source": "lisgis-2022" }
+  },
+
+  "byAgeSex": {
+    "source": "un-wpp-2022",
+    "estimate": true,
+    "years": {
+      "2008": [
+        { "age": "0–4",   "male": 329414, "female": 321823 },
+        { "age": "5–9",   "male": 273458, "female": 269580 },
+        { "age": "10–14", "male": 227929, "female": 226734 },
+        { "age": "15–19", "male": 192866, "female": 192972 },
+        { "age": "20–24", "male": 171060, "female": 171793 },
+        { "age": "25–29", "male": 147755, "female": 149577 },
+        { "age": "30–34", "male": 120382, "female": 123706 },
+        { "age": "35–39", "male": 96264,  "female": 102072 },
+        { "age": "40–44", "male": 81119,  "female": 87662 },
+        { "age": "45–49", "male": 67100,  "female": 72708 },
+        { "age": "50–54", "male": 53724,  "female": 58406 },
+        { "age": "55–59", "male": 41615,  "female": 45549 },
+        { "age": "60–64", "male": 34601,  "female": 37183 },
+        { "age": "65–69", "male": 26409,  "female": 28885 },
+        { "age": "70–74", "male": 17290,  "female": 19220 },
+        { "age": "75–79", "male": 9552,   "female": 10570 },
+        { "age": "80+",   "male": 5897,   "female": 6116 }
+      ],
+      "2022": [
+        { "age": "0–4",   "male": 387473, "female": 377400 },
+        { "age": "5–9",   "male": 367318, "female": 358332 },
+        { "age": "10–14", "male": 346366, "female": 338440 },
+        { "age": "15–19", "male": 303783, "female": 297914 },
+        { "age": "20–24", "male": 248715, "female": 245634 },
+        { "age": "25–29", "male": 198598, "female": 198480 },
+        { "age": "30–34", "male": 169891, "female": 171498 },
+        { "age": "35–39", "male": 152013, "female": 154358 },
+        { "age": "40–44", "male": 129747, "female": 133033 },
+        { "age": "45–49", "male": 102528, "female": 107452 },
+        { "age": "50–54", "male": 80168,  "female": 87492 },
+        { "age": "55–59", "male": 64516,  "female": 72239 },
+        { "age": "60–64", "male": 49097,  "female": 56034 },
+        { "age": "65–69", "male": 34758,  "female": 40627 },
+        { "age": "70–74", "male": 22413,  "female": 26539 },
+        { "age": "75–79", "male": 14158,  "female": 16410 },
+        { "age": "80+",   "male": 9266,   "female": 10594 }
+      ]
+    }
+  }
+}

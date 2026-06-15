@@ -1,0 +1,10 @@
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.log
+
+# Local dev tooling (preview server config) — not part of the deployed site
+.claude/
+
+# Dependency dirs (none used, but guard anyway)
+node_modules/
