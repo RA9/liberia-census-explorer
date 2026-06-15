@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact — Liberia Census Explorer</title>
+  <meta name="description"
+    content="Get in touch about the Liberia Census Explorer — questions, corrections to the data, or collaboration." />
+  <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
+  <link rel="manifest" href="./site.webmanifest" />
+  <link rel="apple-touch-icon" href="./assets/apple-touch-icon.png" />
+  <meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#14120e" media="(prefers-color-scheme: dark)" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Liberia Census Explorer" />
+  <meta property="og:title" content="Contact — Liberia Census Explorer" />
+  <meta property="og:description" content="Get in touch about the Liberia Census Explorer." />
+  <meta property="og:image" content="./assets/og-contact.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Contact — Liberia Census Explorer" />
+  <meta name="twitter:image" content="./assets/og-contact.png" />
+
+  <script type="module"
+    src="https://cdn.jsdelivr.net/gh/RA9/tan-compose@kit-v1.12.0/kit/dist/themes/tokens.min.js"></script>
+  <script type="module"
+    src="https://cdn.jsdelivr.net/gh/RA9/tan-compose@kit-v1.12.0/kit/dist/kit.min.js"></script>
+  <script type="module" src="./vendor/tc-icons.js"></script>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body data-page="contact">
+  <div id="nav-root"></div>
+
+  <div class="page">
+    <header class="hero">
+      <tc-badge variant="info" pill>Contact</tc-badge>
+      <h1>Get in touch</h1>
+      <p class="tagline">
+        Questions, a correction to the data, or interested in collaborating?
+        We'd love to hear from you.
+      </p>
+    </header>
+
+    <tc-grid min="280px" gap="5" class="contact-grid">
+      <!-- Contact details -->
+      <tc-stack gap="4">
+        <tc-card>
+          <div slot="header" class="card-head">
+            <tc-icon name="mail" size="18"></tc-icon><strong>Reach us directly</strong>
+          </div>
+          <div class="prose">
+            <p class="contact-line">
+              <tc-icon name="mail" size="16"></tc-icon>
+              <a href="mailto:smartliberiadevteam@gmail.com">smartliberiadevteam@gmail.com</a>
+            </p>
+            <p class="contact-line">
+              <tc-icon name="link" size="16"></tc-icon>
+              <a href="https://github.com/ra9/tan-compose" target="_blank" rel="noopener">github.com/ra9/tan-compose</a>
+            </p>
+            <p class="contact-line">
+              <tc-icon name="map-pin" size="16"></tc-icon>
+              <span>Monrovia, Liberia</span>
+            </p>
+          </div>
+        </tc-card>
+
+        <tc-callout variant="note">
+          <strong>Spotted a data error?</strong> Include the indicator, year and
+          source so we can verify and correct it quickly.
+        </tc-callout>
+      </tc-stack>
+
+      <!-- Message form -->
+      <tc-card>
+        <div slot="header" class="card-head">
+          <tc-icon name="send" size="18"></tc-icon><strong>Send a message</strong>
+          <span class="card-sub">Opens in your email app — nothing is sent or stored by this site.</span>
+        </div>
+        <form id="contactForm" class="contact-form" novalidate>
+          <tc-input id="cName" label="Name" placeholder="Your name" required></tc-input>
+          <tc-input id="cEmail" type="email" label="Email" placeholder="you@example.com" required></tc-input>
+          <tc-textarea id="cMsg" label="Message" placeholder="How can we help?" rows="5" required></tc-textarea>
+          <div id="formNote" class="form-note" hidden></div>
+          <tc-button id="cSend" variant="primary" type="submit">
+            <tc-icon name="send" size="16"></tc-icon> Send message
+          </tc-button>
+        </form>
+      </tc-card>
+    </tc-grid>
+  </div>
+
+  <div id="footer-root"></div>
+
+  <script type="module">
+    import { setupChrome } from "./js/chrome.js";
+    import { wireContactForm } from "./js/contact.js";
+    setupChrome({ active: "contact" });
+    wireContactForm("smartliberiadevteam@gmail.com");
+  </script>
+</body>
+</html>
