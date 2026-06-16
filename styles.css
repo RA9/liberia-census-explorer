@@ -160,7 +160,7 @@ tc-tabs { display: block; }
 .pl-f .sw { background: var(--tc-color-accent, #a16939); }
 
 /* ── Sources ── */
-.sources #sources { display: grid; gap: 10px; font-size: 0.86rem; }
+#sources { display: grid; gap: 12px; font-size: 0.86rem; }
 .src {
   display: flex; gap: 10px; align-items: flex-start;
   padding: 10px 12px;
