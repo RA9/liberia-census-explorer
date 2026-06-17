@@ -3,10 +3,14 @@
 // only feeds them data and reacts to their events.
 
 import {
-  loadCensus, fmt, years, nationalRows, countyRows, growth,
+  loadCensus, fmt, years, nationalRows, countyRows, growth, insights,
 } from "./data.js";
-import { projectAll, cagrBetween, linearBetween } from "./predict.js";
+import {
+  projectAll, cagrBetween, linearBetween, cagrModel,
+  backtest, doublingTime, milestones, rateProjection,
+} from "./predict.js";
 import { setupChrome, urlState } from "./chrome.js";
+import { setupMap } from "./map.js";
 
 const $ = (id) => document.getElementById(id);
 
@@ -50,6 +54,7 @@ async function main() {
   tabsEl.tabs = [
     { id: "trend", label: "Trend & Forecast" },
     { id: "counties", label: "Counties" },
+    { id: "map", label: "Map" },
     { id: "demographics", label: "Demographics" },
     { id: "data", label: "Raw Data" },
   ];
@@ -137,9 +142,13 @@ async function main() {
   if (pData === "national" || pData === "counties") $("dataset").value = pData;
 
   const pTab = p0.get("tab");
-  if (["trend", "counties", "demographics", "data"].includes(pTab)) {
+  if (["trend", "counties", "map", "demographics", "data"].includes(pTab)) {
     tabsEl.active = pTab;
   }
+
+  // National compound annual growth rate — the scenario slider's default.
+  const natCagr = cagrModel(nat).rate;
+  let scenarioRate = natCagr; // fraction, e.g. 0.0277
 
   // ── Dynamic renders ─────────────────────────────────────────────────
 
@@ -178,6 +187,80 @@ async function main() {
       `<strong>How each projection works</strong><ul class="note-list">` +
       proj.models.map((m) => `<li><b>${m.name}:</b> ${m.describe}</li>`).join("") +
       `</ul>`;
+  }
+
+  // Key insights — computed once, they don't depend on the target year.
+  function renderInsights() {
+    fill($("insights"), insights(db).map((it) => {
+      const el = document.createElement("div");
+      el.className = "insight";
+      el.innerHTML =
+        `<tc-icon name="${it.icon}" size="20"></tc-icon>` +
+        `<div class="insight-val">${it.value}</div>` +
+        `<div class="insight-label">${it.label}</div>` +
+        `<div class="insight-detail">${it.detail}</div>`;
+      return el;
+    }));
+  }
+
+  // Back-test — train on 1962–2008, predict 2022, compare to the real count.
+  function renderBacktest() {
+    const bt = backtest(nat, lastYear);
+    $("backtestSub").textContent =
+      `Trained on ${bt.trainYears.join(", ")} — predicting ${bt.holdoutYear} ` +
+      `(actual ${fmt.int(bt.actual)})`;
+    const rows = bt.rows.map((r) => {
+      const best = r.id === bt.bestId
+        ? ` <tc-badge variant="success" size="sm">closest</tc-badge>` : "";
+      const sign = r.errAbs >= 0 ? "over" : "under";
+      return `<tr>
+        <td>${r.name}${best}</td>
+        <td class="num">${fmt.int(r.predicted)}</td>
+        <td class="num">${fmt.pct(r.errPct)}</td>
+        <td class="muted">${fmt.compact(Math.abs(r.errAbs))} ${sign}</td>
+      </tr>`;
+    }).join("");
+    $("backtest").innerHTML = `
+      <table class="mini-table">
+        <thead><tr><th>Model</th><th class="num">Predicted 2022</th>
+          <th class="num">Error</th><th>Miss</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>`;
+  }
+
+  // Scenario explorer — custom growth rate, projection line + milestones.
+  function renderScenario() {
+    const rate = scenarioRate;
+    const low = Math.max(0, rate - 0.005);
+    const high = rate + 0.005;
+    const end = Math.max(target, 2050);
+    const yrs = [];
+    for (let y = lastYear; y <= end; y++) yrs.push(y);
+    const line = (r) => yrs.map((y) => rateProjection(lastPop, lastYear, r)(y));
+    $("scenarioChart").data = {
+      labels: yrs.map(String),
+      series: [
+        { name: `Selected (${(rate * 100).toFixed(2)}%)`, values: line(rate) },
+        { name: `Low (${(low * 100).toFixed(2)}%)`, values: line(low) },
+        { name: `High (${(high * 100).toFixed(2)}%)`, values: line(high) },
+      ],
+    };
+
+    const dt = doublingTime(rate);
+    const ms = milestones(lastPop, lastYear, rate, [6e6, 7e6, 8e6, 10e6]);
+    const cards = [
+      statCard({
+        label: "Doubling time",
+        value: Number.isFinite(dt) ? Math.round(dt) : "—",
+        suffix: Number.isFinite(dt) ? " yrs" : "",
+      }),
+      ...ms.map((m) => statCard({
+        label: `Reaches ${fmt.compact(m.threshold)}`,
+        value: m.year ?? "—",
+        trend: m.year ? "up" : "neutral",
+      })),
+    ];
+    fill($("milestoneStats"), cards);
   }
 
   function renderCounty() {
@@ -284,6 +367,19 @@ async function main() {
     t.rows = src.rows;
   }
 
+  // Choropleth map — clicking a county focuses it and jumps to the
+  // Counties tab for the full detail (hovering explores without leaving).
+  const mapApi = await setupMap(db, {
+    onSelect: (name) => {
+      if ($("focusCounty").value !== name) {
+        $("focusCounty").value = name;
+        renderCounty();
+      }
+      tabsEl.active = "counties";
+      urlState.write({ county: name, tab: "counties" });
+    },
+  });
+
   // ── Events ──────────────────────────────────────────────────────────
   const onTarget = (e) => {
     const v = Number(e.detail?.value);
@@ -291,13 +387,30 @@ async function main() {
     target = v;
     renderTrend();
     renderCounty();
+    renderScenario();
     urlState.write({ target: v });
   };
   $("targetYear").addEventListener("tc-input", onTarget);
   $("targetYear").addEventListener("tc-change", onTarget);
 
+  const onScenario = (e) => {
+    const v = Number(e.detail?.value);
+    if (!Number.isFinite(v)) return;
+    scenarioRate = v / 100;
+    renderScenario();
+  };
+  $("scenarioRate").value = Number((natCagr * 100).toFixed(2));
+  $("scenarioRate").addEventListener("tc-input", onScenario);
+  $("scenarioRate").addEventListener("tc-change", onScenario);
+  $("scenarioReset").addEventListener("click", () => {
+    scenarioRate = natCagr;
+    $("scenarioRate").value = Number((natCagr * 100).toFixed(2));
+    renderScenario();
+  });
+
   $("focusCounty").addEventListener("tc-change", () => {
     renderCounty();
+    mapApi?.focus($("focusCounty").value);
     urlState.write({ county: $("focusCounty").value });
   });
   $("demoYear").addEventListener("tc-change", () => {
@@ -323,10 +436,15 @@ async function main() {
   });
 
   // ── First paint ─────────────────────────────────────────────────────
+  renderInsights();
+  renderBacktest();
   renderTrend();
+  renderScenario();
   renderCounty();
   renderDemo();
   renderDataTable();
+  // Reflect any restored focus county on the map.
+  mapApi?.focus($("focusCounty").value);
 }
 
 main().catch((err) => {

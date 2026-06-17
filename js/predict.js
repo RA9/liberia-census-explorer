@@ -131,6 +131,54 @@ export function cagrBetween(v0, y0, v1, y1) {
 }
 
 /**
+ * Back-test: fit every model on the censuses BEFORE `holdoutYear`, predict
+ * `holdoutYear`, and compare to the actual count. Returns per-model accuracy.
+ */
+export function backtest(series, holdoutYear) {
+  const actual = Number(series[holdoutYear] ?? series[String(holdoutYear)]);
+  const train = {};
+  for (const [y, v] of Object.entries(series)) {
+    if (Number(y) < holdoutYear) train[y] = v;
+  }
+  const rows = allModels(train).map((m) => {
+    const predicted = Math.max(0, Math.round(m.predict(holdoutYear)));
+    const errAbs = predicted - actual;
+    const errPct = actual ? errAbs / actual : 0;
+    return {
+      id: m.id, name: m.name, predicted, actual,
+      errAbs, errPct, absErrPct: Math.abs(errPct),
+    };
+  });
+  const best = rows.reduce((a, b) => (b.absErrPct < a.absErrPct ? b : a), rows[0]);
+  return { holdoutYear, actual, trainYears: Object.keys(train).map(Number), rows, bestId: best?.id };
+}
+
+/** Doubling time in years for a constant annual rate (Rule-of-70 style). */
+export function doublingTime(rate) {
+  return rate > 0 ? Math.log(2) / Math.log(1 + rate) : Infinity;
+}
+
+/**
+ * First year at/after `fromYear` where a constant-rate projection from
+ * (baseValue @ baseYear) reaches each threshold. Returns [{threshold, year}].
+ */
+export function milestones(baseValue, baseYear, rate, thresholds, maxYear = 2200) {
+  return thresholds.map((threshold) => {
+    if (baseValue >= threshold) return { threshold, year: baseYear, reached: true };
+    if (rate <= 0) return { threshold, year: null, reached: false };
+    // baseValue * (1+rate)^(y-baseYear) >= threshold
+    const y = baseYear + Math.log(threshold / baseValue) / Math.log(1 + rate);
+    const year = Math.ceil(y);
+    return { threshold, year: year <= maxYear ? year : null, reached: false };
+  });
+}
+
+/** Constant-rate projection closure from a base anchor. */
+export function rateProjection(baseValue, baseYear, rate) {
+  return (year) => Math.max(0, Math.round(baseValue * Math.pow(1 + rate, year - baseYear)));
+}
+
+/**
  * Straight-line projection through two points ({2008, 2022}) — constant
  * people-per-year. Companion to cagrBetween for the county comparison chart.
  */

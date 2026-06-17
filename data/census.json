@@ -31,6 +31,12 @@
         "label": "UN World Population Prospects 2022 (via PopulationPyramid.net) — ESTIMATE",
         "url": "https://www.populationpyramid.net/liberia/2022/",
         "supplies": "2022 population pyramid: 5-year age groups by sex (UN estimate, not the census enumeration)"
+      },
+      {
+        "id": "county-areas",
+        "label": "Counties of Liberia — land area (Wikipedia / 2022 census administrative table)",
+        "url": "https://en.wikipedia.org/wiki/Counties_of_Liberia",
+        "supplies": "County land area in km² (used for the map's population-density view)"
       }
     ],
     "notes": [
@@ -66,6 +72,13 @@
     "River Cess":       { "2008": 71509,   "2022": 90819 },
     "River Gee":        { "2008": 66789,   "2022": 124653 },
     "Sinoe":            { "2008": 102391,  "2022": 151149 }
+  },
+
+  "countyAreaKm2": {
+    "Bomi": 1200, "Bong": 8770, "Gbarpolu": 9690, "Grand Bassa": 7940,
+    "Grand Cape Mount": 5160, "Grand Gedeh": 10480, "Grand Kru": 3900,
+    "Lofa": 9980, "Margibi": 2600, "Maryland": 2300, "Montserrado": 1180,
+    "Nimba": 11600, "River Cess": 5600, "River Gee": 5110, "Sinoe": 10140
   },
 
   "bySex": {

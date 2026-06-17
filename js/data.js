@@ -70,6 +70,40 @@ export function nationalRows(db) {
   return { columns, rows };
 }
 
+/** Auto-generated headline facts for the "Key insights" strip. */
+export function insights(db) {
+  const ys = years(db);
+  const first = ys[0], last = ys[ys.length - 1];
+  const p0 = db.national[first], p1 = db.national[last];
+  const multiple = p1 / p0;
+
+  const counties = db.meta.counties;
+  let biggest = counties[0], fastest = counties[0];
+  let biggestPop = -1, fastestG = -Infinity;
+  for (const c of counties) {
+    const cc = db.byCounty[c];
+    if (cc["2022"] > biggestPop) { biggestPop = cc["2022"]; biggest = c; }
+    const g = growth(cc["2008"], cc["2022"]);
+    if (g > fastestG) { fastestG = g; fastest = c; }
+  }
+  const montShare = (db.byCounty["Montserrado"]["2022"] / p1) * 100;
+
+  return [
+    { icon: "trending-up", value: `${multiple.toFixed(1)}×`,
+      label: `Population growth since ${first}`,
+      detail: `${fmt.int(p0)} → ${fmt.int(p1)}` },
+    { icon: "users", value: fmt.compact(p1 - p0),
+      label: `People added since ${first}`,
+      detail: `${fmt.signed(p1 - p0)} over ${last - first} years` },
+    { icon: "map-pin", value: `${montShare.toFixed(0)}%`,
+      label: "Live in Montserrado",
+      detail: `${fmt.int(biggestPop)} in ${biggest} (2022)` },
+    { icon: "spark", value: fastest,
+      label: "Fastest-growing county",
+      detail: `${fmt.pct(fastestG)} from 2008 to 2022` },
+  ];
+}
+
 export function countyRows(db) {
   const columns = [
     { key: "county", label: "County", sortable: true },

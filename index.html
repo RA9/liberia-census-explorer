@@ -79,6 +79,8 @@
     <tc-tabs id="tabs" active="trend">
       <!-- Trend & forecast -->
       <div slot="trend" class="tab-panel">
+        <tc-grid id="insights" min="220px" gap="4" class="insights"></tc-grid>
+
         <tc-grid id="trendStats" min="200px" gap="4"></tc-grid>
 
         <tc-grid min="380px" gap="5">
@@ -98,6 +100,30 @@
             <tc-chart id="forecastChart" type="line" height="300px"></tc-chart>
           </tc-card>
         </tc-grid>
+
+        <!-- Scenario explorer -->
+        <tc-card>
+          <div slot="header" class="card-head">
+            <tc-icon name="pulse" size="18"></tc-icon><strong>Scenario explorer</strong>
+            <span class="card-sub">Set your own annual growth rate and see when Liberia hits each milestone.</span>
+          </div>
+          <div class="scenario-ctl">
+            <tc-slider id="scenarioRate" label="Annual growth rate" min="0.5" max="5"
+              step="0.05" value="2.77" show-value suffix="%"></tc-slider>
+            <tc-button id="scenarioReset" variant="secondary" size="sm">Reset to CAGR</tc-button>
+          </div>
+          <tc-chart id="scenarioChart" type="line" height="260px"></tc-chart>
+          <tc-grid id="milestoneStats" min="160px" gap="3" class="milestones"></tc-grid>
+        </tc-card>
+
+        <!-- Back-test -->
+        <tc-card>
+          <div slot="header" class="card-head">
+            <tc-icon name="verified" size="18"></tc-icon><strong>How accurate are the models?</strong>
+            <span class="card-sub" id="backtestSub"></span>
+          </div>
+          <div id="backtest"></div>
+        </tc-card>
 
         <tc-callout id="modelNotes" variant="note" class="notes"></tc-callout>
       </div>
@@ -128,6 +154,25 @@
             <tc-icon name="list" size="18"></tc-icon><strong>County detail</strong>
           </div>
           <tc-table id="countyTable" page-size="8"></tc-table>
+        </tc-card>
+      </div>
+
+      <!-- Map -->
+      <div slot="map" class="tab-panel">
+        <tc-card>
+          <div slot="header" class="card-head">
+            <tc-icon name="map-pin" size="18"></tc-icon><strong>County map</strong>
+            <span class="card-sub">Hover or tap a county; click to focus it on the Counties tab.</span>
+          </div>
+          <tc-cluster gap="3" align="end" class="map-controls">
+            <tc-select id="mapMode" label="Colour by"></tc-select>
+          </tc-cluster>
+          <div class="map-wrap">
+            <div id="countyMap" class="county-map"></div>
+            <div id="mapTip" class="map-tip" role="tooltip"></div>
+          </div>
+          <div id="mapLegend" class="map-legend"></div>
+          <div id="mapReadout" class="map-readout"></div>
         </tc-card>
       </div>
 
