@@ -162,17 +162,23 @@
         <tc-card>
           <div slot="header" class="card-head">
             <tc-icon name="map-pin" size="18"></tc-icon><strong>County map</strong>
-            <span class="card-sub">Hover or tap a county; click to focus it on the Counties tab.</span>
+            <span class="card-sub">Tap a county (or a row in the list) for its figures.</span>
           </div>
-          <tc-cluster gap="3" align="end" class="map-controls">
+          <tc-cluster gap="4" align="end" class="map-controls">
             <tc-select id="mapMode" label="Colour by"></tc-select>
+            <tc-switch id="mapLabels" label="Show values on map"></tc-switch>
           </tc-cluster>
-          <div class="map-wrap">
-            <div id="countyMap" class="county-map"></div>
-            <div id="mapTip" class="map-tip" role="tooltip"></div>
+          <div class="map-layout">
+            <div class="map-main">
+              <div class="map-wrap">
+                <div id="countyMap" class="county-map"></div>
+                <div id="mapTip" class="map-tip" role="tooltip"></div>
+              </div>
+              <div id="mapLegend" class="map-legend"></div>
+            </div>
+            <div id="mapList" class="map-list" role="listbox" aria-label="Counties ranked by the selected metric"></div>
           </div>
-          <div id="mapLegend" class="map-legend"></div>
-          <div id="mapReadout" class="map-readout"></div>
+          <div id="mapDetail" class="map-detail" hidden></div>
         </tc-card>
       </div>
 

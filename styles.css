@@ -272,16 +272,48 @@ tc-tabs { display: block; }
   border: 1px solid var(--tc-color-rule, #ece5d3);
 }
 .map-legend .lg-min, .map-legend .lg-max { font-variant-numeric: tabular-nums; }
-.map-readout {
-  display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: baseline;
-  margin-top: 14px; padding-top: 14px;
-  border-top: 1px solid var(--tc-color-rule, #ece5d3);
-  font-size: 0.9rem; color: var(--tc-color-ink-soft, #4a5061);
-}
-.map-readout strong { color: var(--tc-color-ink, #14171f); font-size: 1.02rem; }
-.map-readout b { color: var(--tc-color-accent, #a16939); }
-.map-readout .muted { color: var(--tc-color-ink-muted, #6b7280); }
 .map-error { color: var(--tc-color-danger, #b3261e); padding: 20px; text-align: center; }
+
+/* Map + ranked list layout */
+.map-layout { display: grid; grid-template-columns: 1.5fr 1fr; gap: 22px; align-items: start; }
+.map-main { min-width: 0; }
+
+/* On-map value labels */
+.map-svg .map-labels text {
+  font-size: 15px; font-weight: 700; fill: var(--tc-color-ink, #14171f);
+  paint-order: stroke; stroke: var(--tc-color-surface, #fff); stroke-width: 3px;
+  pointer-events: none; font-variant-numeric: tabular-nums;
+}
+
+/* Ranked county list */
+.map-list { display: flex; flex-direction: column; gap: 2px; max-height: 460px; overflow-y: auto; }
+.ml-row {
+  display: grid; grid-template-columns: 1fr 1.2fr auto; align-items: center; gap: 10px;
+  width: 100%; text-align: left; font: inherit; cursor: pointer;
+  background: transparent; border: 1px solid transparent; border-radius: 8px;
+  padding: 7px 9px; color: var(--tc-color-ink, #14171f);
+}
+.ml-row:hover { background: color-mix(in srgb, var(--tc-color-accent, #a16939) 8%, transparent); }
+.ml-row.is-active { border-color: var(--tc-color-accent, #a16939); background: color-mix(in srgb, var(--tc-color-accent, #a16939) 12%, transparent); }
+.ml-name { font-size: 0.86rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ml-bar { height: 8px; border-radius: 999px; background: var(--tc-color-rule, #ece5d3); overflow: hidden; }
+.ml-bar > span { display: block; height: 100%; border-radius: 999px; min-width: 2px; }
+.ml-val { font-size: 0.82rem; font-variant-numeric: tabular-nums; color: var(--tc-color-ink-soft, #4a5061); }
+
+/* Detail card (becomes a bottom sheet on phones) */
+.map-detail {
+  position: relative;
+  margin-top: 18px; padding: 16px 18px;
+  border: 1px solid var(--tc-color-rule, #ece5d3); border-radius: 12px;
+  background: var(--tc-color-surface-alt, #faf8f3);
+}
+.map-detail .md-close { display: none; }
+.md-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.md-head strong { font-size: 1.1rem; }
+.md-metric-now { font-size: 0.86rem; color: var(--tc-color-ink-muted, #6b7280); }
+.md-metric-now b { color: var(--tc-color-accent, #a16939); }
+.md-rows { display: flex; flex-wrap: wrap; gap: 6px 20px; margin: 12px 0 14px; font-size: 0.88rem; color: var(--tc-color-ink-soft, #4a5061); }
+.md-rows b { color: var(--tc-color-ink, #14171f); }
 
 /* ── Footer ── */
 .site-footer {
@@ -347,6 +379,28 @@ tc-tabs { display: block; }
   .navbar { position: sticky; }
   .nav-inner { position: relative; flex-wrap: wrap; }
   .nav-actions { margin-left: 0; margin-top: 6px; }
+
+  /* Map: stack the list under the map; detail becomes a bottom sheet. */
+  .map-layout { grid-template-columns: 1fr; }
+  .map-list { max-height: 300px; }
+  .map-svg .map-labels text { font-size: 19px; }
+  .map-detail.is-open {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 60;
+    margin: 0; padding-bottom: 24px;
+    border: 1px solid var(--tc-color-rule, #ece5d3); border-bottom: none;
+    border-radius: 16px 16px 0 0;
+    background: var(--tc-color-surface, #fff);
+    box-shadow: 0 -12px 32px rgba(0, 0, 0, 0.22);
+  }
+  .map-detail.is-open .md-close {
+    display: grid; place-items: center;
+    position: absolute; top: 10px; right: 10px;
+    width: 30px; height: 30px; border-radius: 999px; cursor: pointer;
+    background: var(--tc-color-surface-alt, #faf8f3);
+    border: 1px solid var(--tc-color-rule, #ece5d3);
+    color: var(--tc-color-ink, #14171f); font-size: 1.15rem; line-height: 1;
+  }
+  .map-detail .md-view { width: 100%; }
 }
 @media (max-width: 560px) {
   .footer-inner { grid-template-columns: 1fr; }

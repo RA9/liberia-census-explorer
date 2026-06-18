@@ -32,7 +32,7 @@ function fill(host, cards) {
 
 const TAGS = [
   "tc-chart", "tc-table", "tc-select", "tc-slider", "tc-stat",
-  "tc-tabs", "tc-icon", "tc-callout", "tc-button", "tc-badge",
+  "tc-tabs", "tc-icon", "tc-callout", "tc-button", "tc-badge", "tc-switch",
 ];
 
 async function main() {
@@ -367,10 +367,17 @@ async function main() {
     t.rows = src.rows;
   }
 
-  // Choropleth map — clicking a county focuses it and jumps to the
-  // Counties tab for the full detail (hovering explores without leaving).
+  // Choropleth map. Selecting a county (tap/list) focuses it in place;
+  // the detail card's button is what navigates to the Counties tab.
   const mapApi = await setupMap(db, {
-    onSelect: (name) => {
+    onFocus: (name) => {
+      if ($("focusCounty").value !== name) {
+        $("focusCounty").value = name;
+        renderCounty();
+        urlState.write({ county: name });
+      }
+    },
+    onNavigate: (name) => {
       if ($("focusCounty").value !== name) {
         $("focusCounty").value = name;
         renderCounty();
