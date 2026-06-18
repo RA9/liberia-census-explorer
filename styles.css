@@ -238,6 +238,33 @@ tc-tabs { display: block; }
 .mini-table .muted { color: var(--tc-color-ink-muted, #6b7280); }
 .mini-table td tc-badge { margin-left: 6px; }
 
+/* ── County comparison (horizontal bars) ── */
+.county-bars { display: flex; flex-direction: column; gap: 7px; }
+.cb-row {
+  display: grid; grid-template-columns: 150px 1fr auto; align-items: center; gap: 12px;
+  padding: 3px 6px; border-radius: 8px; cursor: pointer;
+  border: 1px solid transparent;
+}
+.cb-row:hover { background: color-mix(in srgb, var(--tc-color-accent, #a16939) 7%, transparent); }
+.cb-row:focus-visible { outline: none; border-color: var(--tc-color-accent, #a16939); }
+.cb-name { font-size: 0.86rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cb-track { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.cb-bar { height: 9px; border-radius: 999px; min-width: 2px; transition: width 0.3s ease; }
+.cb-bar.b08 { background: var(--tc-color-accent, #a16939); }
+.cb-bar.b22 { background: var(--tc-color-info, #3a5b8c); }
+.cb-val { font-size: 0.82rem; font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--tc-color-ink, #14171f); }
+.cb-val small { color: var(--tc-color-success, #207a5b); margin-left: 4px; font-variant-numeric: tabular-nums; }
+.cb-legend { display: flex; gap: 18px; margin-top: 16px; font-size: 0.82rem; font-weight: 600; color: var(--tc-color-ink-soft, #4a5061); }
+.cb-legend .cb-lg { display: inline-flex; align-items: center; }
+.cb-legend .sw { width: 12px; height: 12px; border-radius: 3px; margin-right: 7px; }
+.cb-legend .sw.b08 { background: var(--tc-color-accent, #a16939); }
+.cb-legend .sw.b22 { background: var(--tc-color-info, #3a5b8c); }
+@media (max-width: 560px) {
+  .cb-row { grid-template-columns: 92px 1fr auto; gap: 8px; }
+  .cb-name { font-size: 0.8rem; }
+  .cb-val { font-size: 0.78rem; }
+}
+
 /* ── Choropleth map ── */
 .map-controls { margin-bottom: 14px; }
 .map-controls tc-select { min-width: 220px; }

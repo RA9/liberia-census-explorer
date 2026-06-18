@@ -77,14 +77,36 @@ async function main() {
     series: [{ name: "Population", values: ys.map((y) => nat[y]) }],
   };
 
-  // County bar: 2008 vs 2022.
-  $("countyChart").data = {
-    labels: counties,
-    series: [
-      { name: "2008", values: counties.map((c) => db.byCounty[c]["2008"]) },
-      { name: "2022", values: counties.map((c) => db.byCounty[c]["2022"]) },
-    ],
-  };
+  // County comparison — horizontal bars so every one of the 15 counties
+  // keeps its label (a vertical bar chart drops most of them).
+  const countyMax = Math.max(...counties.map((c) => db.byCounty[c]["2022"]));
+  $("countyBars").innerHTML = counties
+    .slice()
+    .sort((a, b) => db.byCounty[b]["2022"] - db.byCounty[a]["2022"])
+    .map((name) => {
+      const c = db.byCounty[name];
+      const g = growth(c["2008"], c["2022"]);
+      const w08 = ((c["2008"] / countyMax) * 100).toFixed(1);
+      const w22 = ((c["2022"] / countyMax) * 100).toFixed(1);
+      return `<div class="cb-row" data-name="${name}" role="button" tabindex="0">
+        <span class="cb-name">${name}</span>
+        <div class="cb-track">
+          <div class="cb-bar b08" style="width:${w08}%" title="2008: ${fmt.int(c["2008"])}"></div>
+          <div class="cb-bar b22" style="width:${w22}%" title="2022: ${fmt.int(c["2022"])}"></div>
+        </div>
+        <span class="cb-val">${fmt.compact(c["2022"])} <small>${fmt.pct(g, 0)}</small></span>
+      </div>`;
+    }).join("");
+  // Tapping a county row focuses it everywhere.
+  $("countyBars").addEventListener("click", (e) => {
+    const row = e.target.closest?.(".cb-row");
+    if (!row) return;
+    $("focusCounty").value = row.dataset.name;
+    renderCounty();
+    mapApi?.focus(row.dataset.name);
+    urlState.write({ county: row.dataset.name });
+  });
+
   const ctyTbl = countyRows(db);
   $("countyTable").columns = ctyTbl.columns;
   $("countyTable").rows = ctyTbl.rows;

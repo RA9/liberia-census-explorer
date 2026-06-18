@@ -144,9 +144,13 @@
         <tc-card>
           <div slot="header" class="card-head">
             <tc-icon name="bar-chart" size="18"></tc-icon><strong>Population by county</strong>
-            <span class="card-sub">2008 vs 2022, all 15 counties</span>
+            <span class="card-sub">2008 vs 2022, ranked — all 15 counties (tap a row to focus it)</span>
           </div>
-          <tc-chart id="countyChart" type="bar" height="340px"></tc-chart>
+          <div id="countyBars" class="county-bars"></div>
+          <div class="cb-legend">
+            <span class="cb-lg"><i class="sw b08"></i>2008</span>
+            <span class="cb-lg"><i class="sw b22"></i>2022</span>
+          </div>
         </tc-card>
 
         <tc-card>
